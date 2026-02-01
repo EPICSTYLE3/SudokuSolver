@@ -8,12 +8,7 @@ int* starting(int puzzle[]){
     {
         fscanf(fileptr, "%d", &puzzle[i]);
     }
-    int b = puzzle[6]+puzzle[7];
-
-    //for (i = 0; i < 81; i++)
-    //{
-    //    printf("Number is: %d\n\n", puzzle[i]);
-    //}
+    fclose(fileptr);
     return puzzle;
 }
 int checkcomplete(int puzzle[]){
@@ -91,7 +86,7 @@ int* solve(int puzzle[]){
             if (possibleoptions==1) // if there is only one possible option
             {
                 puzzle[i] = possible[possiblepos];
-                printf("\n made a change");
+                // printf("\n made a change");
 
             }
         }
@@ -99,6 +94,26 @@ int* solve(int puzzle[]){
     }
     return puzzle;
 }
+int *write(int done[])
+{
+    int printhelp;
+    int i;
+    char writing;
+    fileptr =fopen("solved.txt","w");
+    for (i = 0; i < 81; i++)
+    {
+        writing = ("%d ", done[i]);
+        fprintf(fileptr,"%d ",done[i]);
+        printhelp++;
+        if (printhelp ==9)
+        {
+            fprintf(fileptr,"\n");
+            printhelp =0;
+        }
+    }
+    fclose(fileptr);
+}
+
 
 int main(void){
 //---------------- INITALISATIONS--------------
@@ -115,7 +130,6 @@ int main(void){
     int broken =0;
 //---------------Main LOOP---------------
     while (cont == 1 && broken != 1)       
-//    for (i=0;i<5;i++)
     {
         cont = checkcomplete(new);
         broken = 1;
@@ -151,8 +165,6 @@ int main(void){
             }
         }
     }
-
+    write(new);
     return 0;
-
-    
 }
