@@ -28,17 +28,17 @@ int checkcomplete(int puzzle[]){
     }
 
 }
-int solve(int puzzle[]){
+int* solve(int puzzle[]){
     int i;
     int m;
+    int a;
+    int b;
     int row; // top to bottom
     int rowvalue;
     int column; // left to right
     int columnvalue;
     int box; // 1 top left 2 middle top
-    int new[81]= {0};
-    for (i=0; i<81;i++);
-        new[i] = puzzle[i];
+    int boxcomp[9] = {0};
 //SOLVE LOGIC-------------------------------------
     for(i=0; i<81; i++) // for each number
     {
@@ -47,6 +47,17 @@ int solve(int puzzle[]){
             int possible[9] = {1,2,3,4,5,6,7,8,9};
             row = floor(i/9);
             column = i%9; //starting at 0->8
+            // ----------------- box logic
+            for(a=0;a<3;a++) //row of box
+                {
+                    for(b=0;b<3;b++) //col of box
+                    {
+                        box = (b+(column- (column%3))+((row- (row%3)+a)*9));
+                        boxcomp[a*3+b] = puzzle[(b+(column- column%3)+((row- row%3+a)*9))];   
+                    }
+                    
+                } 
+            //---------------------------
             for (m=0;m<9;m++) //check row for impossible options
             {
                 rowvalue = puzzle[(m+9*row)]; 
@@ -54,30 +65,39 @@ int solve(int puzzle[]){
                 {
                     possible[rowvalue-1]=0;
                 }
+
                 columnvalue = puzzle[column+m*9];
                 if (columnvalue!=0);
                 {
                     possible[columnvalue-1]=0;
                 }
-                // insert box removal logic here 
+                if (boxcomp[m] !=0)
+                {
+                    possible[boxcomp[m]-1]=0;
+                }
             }
+
             // insert logic to sub in the numbers to puzzle if theres only one possible
+            int possibleoptions =0;
+            int possiblepos;
+            for(m=0;m<9;m++)
+            {
+                if (possible[m]!=0)
+                {
+                    possibleoptions++;
+                    possiblepos=m;
+                }
+            }
+            if (possibleoptions==1) // if there is only one possible option
+            {
+                puzzle[i] = possible[possiblepos];
+                printf("\n made a change");
 
-            for (m=0;m<9;m++){printf("\n here is the value remaining %d",possible[m]);}
-
+            }
         }
        
     }
-
-
-// ---------------------------------------------
-// check to see if we did anything if not break
-    for (i=0; i<81;i++);
-        if (new[i] != puzzle[i])
-        {
-            //return(0);
-        }
-    return (1);
+    return puzzle;
 }
 
 int main(void){
@@ -85,14 +105,36 @@ int main(void){
     int puzzle[81] = {0};
     starting(puzzle);
     int i;
-    //for (i=0;i<81; i++)
-    //    printf("Number is: %d\n\n", puzzle[i]);
+    int j;
+    int new[81]= {0};
+    for (i=0; i<81;i++)
+    {
+        new[i] = puzzle[i];
+    }
     int cont = 1;
     int broken =0;
-// ---------------Main LOOP---------------
-    while (cont == 1 && broken != 1){
-        broken = solve(puzzle);
-        cont = checkcomplete(puzzle);
+//---------------Main LOOP---------------
+    while (cont == 1 && broken != 1)       
+//    for (i=0;i<5;i++)
+    {
+        cont = checkcomplete(new);
+        broken = 1;
+        solve(new);
+        // check and see if changes were made
+        for (j=0; j<81;j++);
+            if (new[i] != puzzle[i])
+            {
+                printf("this happened");
+                broken = 0; // a change was made
+                puzzle[i] = new[i];
+            }
+    }
+    //----------------------------------------
+    printf("\n exited while \n");
+    int printhelp = 0;
+    if (cont==0)
+    {
+        broken=0;
     }
     if (broken ==1){
         printf("\n Couldnt solve too stupid :( ");
@@ -100,8 +142,17 @@ int main(void){
     else{
         for (i = 0; i < 81; i++)
         {
-            printf("Number is: %d\n\n", puzzle[i]);
+            printf("%d ", new[i]);
+            printhelp++;
+            if (printhelp ==9)
+            {
+                printf("\n");
+                printhelp =0;
+            }
         }
     }
+
     return 0;
+
+    
 }
