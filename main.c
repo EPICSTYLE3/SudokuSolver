@@ -2,7 +2,7 @@
 #include <math.h>
 FILE *fileptr;
 int* starting(int puzzle[]){
-    fileptr = fopen("puzzle.txt","r");
+    fileptr = fopen("evennewpuzz.txt","r");
     int i;
     for (i = 0; i < 81; i++)
     {
@@ -19,8 +19,10 @@ int checkcomplete(int puzzle[]){
             printf("\n Not done lol");
             return(1);
         }
-        return(0);
+        
     }
+    printf("\n Solved :)");
+    return(0);
 
 }
 int* solve(int puzzle[]){
@@ -48,9 +50,8 @@ int* solve(int puzzle[]){
                     for(b=0;b<3;b++) //col of box
                     {
                         box = (b+(column- (column%3))+((row- (row%3)+a)*9));
-                        boxcomp[a*3+b] = puzzle[(b+(column- column%3)+((row- row%3+a)*9))];   
+                        boxcomp[a*3+b] = puzzle[(b+(column- column%3)+((row- row%3+a)*9))];   // might be brk
                     }
-                    
                 } 
             //---------------------------
             for (m=0;m<9;m++) //check row for impossible options
@@ -131,9 +132,9 @@ int main(void){
 //---------------Main LOOP---------------
     while (cont == 1 && broken != 1)       
     {
+        solve(new);
         cont = checkcomplete(new);
         broken = 1;
-        solve(new);
         // check and see if changes were made
         for (j=0; j<81;j++);
             if (new[i] != puzzle[i])
@@ -149,6 +150,7 @@ int main(void){
     if (cont==0)
     {
         broken=0;
+        printf("\n I think im done \n");
     }
     if (broken ==1){
         printf("\n Couldnt solve too stupid :( ");
